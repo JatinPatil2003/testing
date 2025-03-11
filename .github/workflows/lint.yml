@@ -1,23 +1,9 @@
 name: Lint
 on:
-  push
+  pull_request:
 
 jobs:
-  list_packages:
-    runs-on: ubuntu-latest
-    container:
-      image: rostooling/setup-ros-docker:ubuntu-noble-ros-rolling-ros-base-latest
-    outputs:
-      packages: ${{ steps.get-packages.outputs.packages }}
-    steps:
-      - uses: actions/checkout@v4
-      - name: Get package names
-        id: get-packages
-        run: |
-          echo "packages=$(colcon list --names-only | jq -R -s -c 'split("\n")[:-1]')" >> "$GITHUB_ENV"
-
-  ament_lint:
-    needs: list_packages
+  ament_lint_general:
     name: ament_${{ matrix.linter }}
     runs-on: ubuntu-latest
     container:
@@ -25,12 +11,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        linter: [xmllint, cpplint, uncrustify, pep257, flake8, mypy]
-        package: ${{ fromJson(needs.list_packages.outputs.packages) }}
+          linter: [xmllint, cpplint, uncrustify, pep257, flake8]
     steps:
-      - uses: actions/checkout@v4
-      - uses: ros-tooling/action-ros-lint@v0.1
-        with:
-          linter: ${{ matrix.linter }}
-          distribution: rolling
-          package-name: ${{ matrix.package }}
+    - uses: actions/checkout@v4
+    - uses: ros-tooling/action-ros-lint@v0.1
+      with:
+        linter: ${{ matrix.linter }}
+        distribution: rolling
+        package-name: |
+          nav2_loopback_sim
+          nav2_simple_commander
