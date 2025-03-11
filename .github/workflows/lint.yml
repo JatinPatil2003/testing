@@ -18,6 +18,4 @@ jobs:
       with:
         linter: ${{ matrix.linter }}
         distribution: rolling
-        package-name: |
-          nav2_loopback_sim
-          nav2_simple_commander
+        package-name: "nav2_loopback_sim nav2_simple_commander"
