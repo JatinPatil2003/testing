@@ -1,6 +1,6 @@
 name: Lint
 on:
-  pull_request:
+  push:
 
 jobs:
   ament_lint_general:
@@ -18,4 +18,4 @@ jobs:
       with:
         linter: ${{ matrix.linter }}
         distribution: rolling
-        package-name: "*"
+        package-name: "nav2_loopback_sim nav2_simple_commander"
