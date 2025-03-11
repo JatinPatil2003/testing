@@ -11,19 +11,21 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-          linter: [xmllint, cpplint, uncrustify, pep257, flake8, mypy]
+        linter: [xmllint, cpplint, uncrustify, pep257, flake8, mypy]
     steps:
-    - uses: actions/checkout@v4
-    - name: Configure MyPy
-        if: matrix.linter == 'mypy'
+      - uses: actions/checkout@v4
+
+      - name: Configure MyPy
+        if: matrix.linter == 'mypy'  # ✅ Fixed indentation & syntax
         run: |
           echo "[mypy]" > mypy.ini
           echo "explicit_package_bases = True" >> mypy.ini
           echo "exclude = setup.py" >> mypy.ini
           export PYTHONPATH=$PYTHONPATH:/opt/ros/rolling/lib/python3.10/site-packages
           mypy --explicit-package-bases .
-    - uses: ros-tooling/action-ros-lint@v0.1
-      with:
-        linter: ${{ matrix.linter }}
-        distribution: rolling
-        package-name: "*"
+
+      - uses: ros-tooling/action-ros-lint@v0.1
+        with:
+          linter: ${{ matrix.linter }}
+          distribution: rolling
+          package-name: "*"
